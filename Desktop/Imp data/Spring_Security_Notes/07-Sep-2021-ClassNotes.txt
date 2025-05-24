@@ -1,0 +1,144 @@
+Today's session : What is JWT Authentication
+------------------------------------------------------------------------
+-> What is Security ?
+
+-> What is Authentication ?
+
+-> What is Authorization ?
+
+-> Spring Security with In-Memory Authentication 
+
+-> Spring Security with JDBC Authentication
+-------------------------------------------------------------------------
+
+-> By using above In-Memory and JDBC Authentication we can secure web applications.
+
+----------------------------------------------------------------------------------
+How to secure Distributed application
+----------------------------------------------------------------------------------
+-> When one application is using services of other applications then implementation of security with  webservices concepts becomes more important.
+
+-> In this scenario we will secure our application by using a token.
+
+----------------------------------------------------------------------------------
+-> JWT is standard mechanism to implement Token based security
+
+-> JWT stands Json Web Tokens
+
+-> JWT is not only for java, we can use this technique in other languages also to secure our applications.
+----------------------------------------------------------------------------------
+
+-> Token is a data which will be in the encoded format
+
+-> We will use secret key to generate token
+
+-> JWT token will have 3 parts
+
+		i) header
+		ii) payload
+		iii) signature
+
+Note: JWT Token each part will be seperated by comma (,)
+
+Header : It contains JWT specific information
+
+Payload : IT contains claims (Client ID, Client Name, Issuer Name, Audience Name, Date of Issue, Expirty Date etc..)
+
+Signature : Base64 encoded form of header & payload, aditionally signed with secret key.
+
+
+Sample Token
+------------
+eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJ0azk5MzEiLCJzdWIiOiJteXRva2VuIiwiaXNzIjoiQXNob2sgSVQiLCJhdWQiOiJBQkNfSVQiLCJpYXQiOjE2MzA5ODQ2NTQsImV4cCI6MTYzMDk4ODI1NH0.8WN1DMPJ7dingc4pAFmPDQyk2SnfAJ-OutGHQ5gcy0qd1h1lc3rrTApc7tvI0l-aCYRB5CcxWbBHRUDlC9i8Zg
+
+
+-----------------------------------------------------------------------------------------------
+Steps to generate token using JWT
+----------------------------------------------------------------------------------------------
+1) Create Maven Project with below dependencies
+
+	<dependencies>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+	</dependencies>
+
+2) Create below class
+
+
+
+package in.ashokit;
+
+import java.util.Base64;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+public class JWTUtil {
+	
+	public static String generateToken(String subject, String secretKey) {
+		
+	return Jwts.builder()
+			.setId("tk9931")
+			.setSubject(subject)
+			.setIssuer("Ashok IT")
+			.setAudience("ABC_IT")
+			.setIssuedAt(new Date(System.currentTimeMillis()))
+			.setExpiration(new Date(System.currentTimeMillis()+ TimeUnit.HOURS.toMillis(1)))
+			.signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encode(secretKey.getBytes()))
+			.compact();
+	}
+	
+	public static void main(String[] args) {
+		String secretKey = "mysecret@1";
+		String subject = "mytoken";
+
+		//Generating Token
+		String token = JWTUtil.generateToken(subject, secretKey);
+		//printing token
+		System.out.println(token);
+		
+		//code to parse the token
+		JwtParser parser = Jwts.parser();
+		Claims claims = parser.setSigningKey(Base64.getEncoder().encode(secretKey.getBytes()))
+							  .parseClaimsJws(token)
+							  .getBody();
+
+		//Printing token information
+		System.out.println("Token ID : " + claims.getId());
+		System.out.println("Token Issued By : " + claims.getIssuer());
+		System.out.println("Token Generated :: "+ claims.getIssuedAt());
+		System.out.println("Token Expiry :: " +claims.getExpiration());
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

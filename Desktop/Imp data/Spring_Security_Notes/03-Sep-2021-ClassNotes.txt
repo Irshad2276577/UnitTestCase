@@ -1,0 +1,92 @@
+Last Session : Spring Security with In-Memory Authentication
+------------------------------------------------------------------------
+Today's session : Spring Security with JDBC Authentication
+-------------------------------------------------------------------------
+
+-> In-Memory authentication means we will configure user credentials with in the application.
+
+-> JDBC authentication means user credentials will be stored in database table.
+
+---------------------------------------------------------------------------------
+Spring Security with JDBC Authentication Example
+---------------------------------------------------------------------------------
+1) Create Encrypted password using BCryptPasswordEncoder
+
+		BCryptPasswordEncoder bpe = new BCryptPasswordEncoder();
+		String encode = bpe.encode("dev@123");
+		System.out.println(encode);
+
+Encoded Pwd : $2a$10$RAHywU81oPWWCDVfhRX1c.zRBbBldGDWfG2zPsfd1LQ1foIRd6sJW
+
+
+2) Create Database table and insert dummy records
+
+create table user_dtls 
+(
+ 
+ user_id integer,
+ user_name varchar(30), 
+ user_pwd varchar(100), 
+ user_role varchar(20), 
+ user_enabled integer
+ 
+);
+
+INSERT INTO user_dtls values(101,'dev','$2a$10$RAHywU81oPWWCDVfhRX1c.zRBbBldGDWfG2zPsfd1LQ1foIRd6sJW','ADMIN',1);
+
+INSERT INTO user_dtls values(102,'ns','$2a$10$RAHywU81oPWWCDVfhRX1c.zRBbBldGDWfG2zPsfd1LQ1foIRd6sJW','EMPLOYEE',1);
+
+INSERT INTO user_dtls values(103,'vs','$2a$10$RAHywU81oPWWCDVfhRX1c.zRBbBldGDWfG2zPsfd1LQ1foIRd6sJW','MANAGER',1);
+
+******We need to execute below queries in our application For Authentication******
+
+Query#1 : Retrieve username,password,enabled using username ;
+
+♦ select user_name,user_pwd,user_enabled from user where user_name=?;
+
+Query#2 : Retrieve username,role using username;
+
+♦ select user_name,user_role from user where user_name=?;
+
+
+3) Create Spring Boot application with required dependencies
+	
+		i)spring-boot-starter-web
+		ii)spring-boot-starter-security
+		iii)spring-boot-starter-thymeleaf
+		iv) spring-boot-starter-jdbc
+		v) ojdbc
+		vi) devtools
+
+4) Create Controller class with required methods
+
+5) Create View Files Using Thymeleaf template
+
+6) Create below Config classes
+
+		i) AppConfig.java
+		ii) SecurityConfig.java
+
+7) Configure Server Port and Datasource properties in application.properties file
+==================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
